@@ -3,7 +3,7 @@ import { Customer } from '../../enterprise/entities/customer'
 import { User, type UserRole } from '../../enterprise/entities/user'
 import type { CustomersRepository } from '../repositories/customers-repository'
 import type { UsersRepository } from '../repositories/users-repository'
-import { UserAlreadyExistsError } from './errors/user-already-exists'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import type { HashGenerator } from '../criptography/hash-generator'
 
 interface RegisterUserUseCaseRequest {
