@@ -14,12 +14,13 @@ export interface CustomerProps {
 
 export class Customer extends Entity<CustomerProps> {
   static create(
-    props: Optional<CustomerProps, 'createdAt' | 'updatedAt'>,
+    props: Optional<CustomerProps, 'createdAt' | 'updatedAt' | 'status'>,
     id?: UniqueEntityID
   ): Customer {
     return new Customer(
       {
         ...props,
+        status: props.status ?? true,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: null,
       },
