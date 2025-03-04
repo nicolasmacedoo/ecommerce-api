@@ -30,16 +30,40 @@ export class Product extends Entity<ProductProps> {
     return this.props.name
   }
 
+  set name(name: string) {
+    this.props.name = name
+
+    this.touch()
+  }
+
   get description(): string {
     return this.props.description
+  }
+
+  set description(description: string) {
+    this.props.description = description
+
+    this.touch()
   }
 
   get price(): number {
     return this.props.price
   }
 
+  set price(price: number) {
+    this.props.price = price
+
+    this.touch()
+  }
+
   get stockQuantity(): number {
     return this.props.stockQuantity
+  }
+
+  set stockQuantity(stockQuantity: number) {
+    this.props.stockQuantity = stockQuantity
+
+    this.touch()
   }
 
   get createdAt(): Date {
@@ -48,5 +72,9 @@ export class Product extends Entity<ProductProps> {
 
   get updatedAt(): Date | null | undefined {
     return this.props.updatedAt
+  }
+
+  private touch(): void {
+    this.props.updatedAt = new Date()
   }
 }
