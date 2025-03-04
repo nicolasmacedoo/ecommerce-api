@@ -5,7 +5,7 @@ import type { Customer } from '@/domain/ecommerce/enterprise/entities/customer'
 import { PrismaCustomerMapper } from '../mappers/prisma-customer-mapper'
 
 @Injectable()
-export class PrismaCustomerRepository implements CustomersRepository {
+export class PrismaCustomersRepository implements CustomersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findByUserId(userId: string): Promise<Customer | null> {
