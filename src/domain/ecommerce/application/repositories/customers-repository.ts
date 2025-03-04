@@ -1,6 +1,6 @@
 import type { Customer } from '../../enterprise/entities/customer'
 
-export interface CustomersRepository {
-  findByUserId(userId: string): Promise<Customer | null>
-  create(customer: Customer): Promise<void>
+export abstract class CustomersRepository {
+  abstract findByUserId(userId: string): Promise<Customer | null>
+  abstract create(customer: Customer): Promise<void>
 }
