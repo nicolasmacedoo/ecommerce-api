@@ -1,7 +1,7 @@
 import type { UsersRepository } from '@/domain/ecommerce/application/repositories/users-repository'
 import type { User } from '@/domain/ecommerce/enterprise/entities/user'
 import { Injectable } from '@nestjs/common'
-import type { PrismaService } from '../prisma.service'
+import { PrismaService } from '../prisma.service'
 import { PrismaUserMapper } from '../mappers/prisma-user-mapper'
 
 @Injectable()

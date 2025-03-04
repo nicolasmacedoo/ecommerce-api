@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { PrismaService } from '../prisma.service'
+import { PrismaService } from '../prisma.service'
 import { CustomersRepository } from '@/domain/ecommerce/application/repositories/customers-repository'
 import type { Customer } from '@/domain/ecommerce/enterprise/entities/customer'
 import { PrismaCustomerMapper } from '../mappers/prisma-customer-mapper'
