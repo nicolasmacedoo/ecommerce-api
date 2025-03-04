@@ -1,10 +1,12 @@
 import { left, right, type Either } from 'src/core/either'
 import { Customer } from '../../enterprise/entities/customer'
 import { User, type UserRole } from '../../enterprise/entities/user'
-import type { CustomersRepository } from '../repositories/customers-repository'
-import type { UsersRepository } from '../repositories/users-repository'
+import { CustomersRepository } from '../repositories/customers-repository'
+import { UsersRepository } from '../repositories/users-repository'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
-import type { HashGenerator } from '../criptography/hash-generator'
+import { HashGenerator } from '../criptography/hash-generator'
+import { Injectable } from '@nestjs/common'
+import { MissingRequiredFieldsError } from './errors/missing-required-fields-error'
 
 interface RegisterUserUseCaseRequest {
   name: string
@@ -17,12 +19,13 @@ interface RegisterUserUseCaseRequest {
 }
 
 type RegisterUserUseCaseResponse = Either<
-  UserAlreadyExistsError,
+  UserAlreadyExistsError | MissingRequiredFieldsError,
   {
     user: User
   }
 >
 
+@Injectable()
 export class RegisterUserUseCase {
   constructor(
     private readonly hashGenerator: HashGenerator,
@@ -40,9 +43,16 @@ export class RegisterUserUseCase {
     fullName,
   }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
-
     if (userAlreadyExists) {
       return left(new UserAlreadyExistsError(email))
+    }
+
+    if (role === 'CUSTOMER') {
+      if (!fullName || !contact || !address) {
+        return left(
+          new MissingRequiredFieldsError(['fullName', 'contact', 'address'])
+        )
+      }
     }
 
     const hashedPassword = await this.hashGenerator.hash(password)
@@ -56,11 +66,7 @@ export class RegisterUserUseCase {
 
     await this.usersRepository.create(user)
 
-    if (role === 'CUSTOMER') {
-      if (!fullName || !contact || !address) {
-        throw new Error('Missing required fields for Customer.')
-      }
-
+    if (role === 'CUSTOMER' && fullName && contact && address) {
       const customer = Customer.create({
         userId: user.id,
         fullName,
