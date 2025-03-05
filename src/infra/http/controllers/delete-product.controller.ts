@@ -1,23 +1,45 @@
 import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/delete-product'
 import {
-  BadRequestException,
   Controller,
   Delete,
   HttpCode,
+  NotFoundException,
   Param,
 } from '@nestjs/common'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger'
 
+@ApiTags('Products')
 @Controller('/products/:id')
 export class DeleteProductController {
   constructor(private readonly deleteProductUseCase: DeleteProductUseCase) {}
 
   @Delete()
   @HttpCode(204)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a product' })
+  @ApiParam({
+    name: 'id',
+    description: 'Product ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiNoContentResponse({
+    description: 'Product deleted successfully',
+  })
+  @ApiNotFoundResponse({
+    description: 'Product not found',
+  })
   async handle(@Param('id') id: string) {
     const result = await this.deleteProductUseCase.execute({ id })
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      throw new NotFoundException()
     }
   }
 }

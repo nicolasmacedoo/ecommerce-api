@@ -1,14 +1,24 @@
 import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe'
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
+  NotFoundException,
   Param,
   Put,
 } from '@nestjs/common'
 import { EditProductUseCase } from '@/domain/ecommerce/application/use-cases/edit-product'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger'
+import { createZodDto } from 'nestjs-zod'
 
 const editProductBodySchema = z.object({
   name: z.string(),
@@ -19,16 +29,31 @@ const editProductBodySchema = z.object({
 
 const bodyValidationPipe = new ZodValidationPipe(editProductBodySchema)
 
-type EditProductBodySchema = z.infer<typeof editProductBodySchema>
+class EditProductDTO extends createZodDto(editProductBodySchema) {}
 
+@ApiTags('Products')
 @Controller('/products/:id')
 export class EditProductController {
   constructor(private readonly editProduct: EditProductUseCase) {}
 
   @Put()
   @HttpCode(204)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update an existing product' })
+  @ApiParam({
+    name: 'id',
+    description: 'Product ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiBadRequestResponse({ description: 'Invalid product data' })
+  @ApiNoContentResponse({
+    description: 'Product updated successfully',
+  })
+  @ApiNotFoundResponse({
+    description: 'Product not found',
+  })
   async handle(
-    @Body(bodyValidationPipe) body: EditProductBodySchema,
+    @Body(bodyValidationPipe) body: EditProductDTO,
     @Param('id') id: string
   ) {
     const { name, description, price, stockQuantity } = body
@@ -42,7 +67,7 @@ export class EditProductController {
     })
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      throw new NotFoundException()
     }
   }
 }

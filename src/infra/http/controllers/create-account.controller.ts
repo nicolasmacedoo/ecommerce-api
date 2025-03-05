@@ -12,6 +12,14 @@ import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe'
 import { UserAlreadyExistsError } from '@/domain/ecommerce/application/use-cases/errors/user-already-exists-error'
 import { MissingRequiredFieldsError } from '@/domain/ecommerce/application/use-cases/errors/missing-required-fields-error'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+} from '@nestjs/swagger'
+import { createZodDto } from 'nestjs-zod'
 
 const createAccountBodySchema = z.object({
   name: z.string({
@@ -26,10 +34,11 @@ const createAccountBodySchema = z.object({
   address: z.string().optional(),
 })
 
+export class CreateAccountDTO extends createZodDto(createAccountBodySchema) {}
+
 const bodyValidationPipe = new ZodValidationPipe(createAccountBodySchema)
 
-type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
-
+@ApiTags('Accounts')
 @Controller('/accounts')
 @Public()
 export class CreateAccountController {
@@ -37,7 +46,17 @@ export class CreateAccountController {
 
   @Post()
   @HttpCode(201)
-  async handle(@Body(bodyValidationPipe) body: CreateAccountBodySchema) {
+  @ApiOperation({ summary: 'Create a new user account' })
+  @ApiCreatedResponse({
+    description: 'Account created successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'Missing required fields or invalid input data',
+  })
+  @ApiConflictResponse({
+    description: 'Email already in use',
+  })
+  async handle(@Body(bodyValidationPipe) body: CreateAccountDTO) {
     const { name, email, password, role, address, contact, fullName } = body
 
     const result = await this.registerUser.execute({

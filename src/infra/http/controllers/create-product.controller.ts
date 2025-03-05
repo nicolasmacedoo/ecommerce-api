@@ -2,9 +2,19 @@ import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe'
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { CreateProductUseCase } from '@/domain/ecommerce/application/use-cases/create-product'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger'
+import { createZodDto } from 'nestjs-zod'
 
 const createProductBodySchema = z.object({
-  name: z.string(),
+  name: z
+    .string({ required_error: 'Name is required' })
+    .min(3, { message: 'Name must be at least 3 characters long' }),
   price: z.number(),
   description: z.string(),
   stockQuantity: z.number(),
@@ -12,14 +22,22 @@ const createProductBodySchema = z.object({
 
 const bodyValidationPipe = new ZodValidationPipe(createProductBodySchema)
 
-type CreateProductBodySchema = z.infer<typeof createProductBodySchema>
+export class CreateProductDTO extends createZodDto(createProductBodySchema) {}
 
+@ApiTags('Products')
 @Controller('/products')
 export class CreateProductController {
   constructor(private readonly createProduct: CreateProductUseCase) {}
 
   @Post()
-  async handle(@Body(bodyValidationPipe) body: CreateProductBodySchema) {
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new product' })
+  @ApiResponse({
+    status: 201,
+    description: 'Product created successfully',
+  })
+  @ApiBadRequestResponse({ description: 'Invalid product data' })
+  async handle(@Body(bodyValidationPipe) body: CreateProductDTO) {
     const { name, description, price, stockQuantity } = body
 
     const result = await this.createProduct.execute({
