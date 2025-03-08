@@ -1,5 +1,11 @@
 import { GetProductByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-product-by-id'
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+} from '@nestjs/common'
 import { ProductPresenter } from '../presenters/product-presenter'
 import {
   ApiTags,
@@ -8,13 +14,15 @@ import {
   ApiResponse,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger'
 import { ProductDTO } from './dtos/product.dto'
+import { NotFoundError } from 'rxjs'
 
 @ApiTags('Products')
 @Controller('/products/:id')
 export class GetProductByIdController {
-  constructor(private readonly getProductByIdUseCase: GetProductByIdUseCase) {}
+  constructor(private readonly getProductById: GetProductByIdUseCase) {}
 
   @Get()
   @ApiBearerAuth()
@@ -29,14 +37,14 @@ export class GetProductByIdController {
     description: 'Product found successfully',
     type: ProductDTO,
   })
-  @ApiBadRequestResponse({
-    description: 'Invalid product ID or product not found',
+  @ApiNotFoundResponse({
+    description: 'Product not found',
   })
   async handle(@Param('id') id: string) {
-    const result = await this.getProductByIdUseCase.execute({ id })
+    const result = await this.getProductById.execute({ id })
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      throw new NotFoundException()
     }
 
     return { product: ProductPresenter.toHTTP(result.value.product) }
