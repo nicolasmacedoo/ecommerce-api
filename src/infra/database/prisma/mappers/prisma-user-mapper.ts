@@ -2,7 +2,6 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { User } from '@/domain/ecommerce/enterprise/entities/user'
 import type { User as PrismaUser, Prisma } from '@prisma/client'
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class PrismaUserMapper {
   static toDomain(raw: PrismaUser): User {
     return User.create(

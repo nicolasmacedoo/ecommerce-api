@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy'
       global: true,
       useFactory: async (env: EnvService) => ({
         secret: env.get('JWT_SECRET'),
-        signOptions: { expiresIn: '60s', algorithm: 'HS256' },
+        signOptions: { expiresIn: '1 day', algorithm: 'HS256' },
       }),
     }),
   ],

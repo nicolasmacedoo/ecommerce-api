@@ -1,3 +1,4 @@
+import type { Optional } from '@/core/types/optional'
 import { Entity } from 'src/core/entities/entity'
 import type { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 
@@ -6,11 +7,21 @@ export interface OrderItemProps {
   productId: UniqueEntityID
   price: number
   quantity: number
+  subtotal: number
 }
 
 export class OrderItem extends Entity<OrderItemProps> {
-  static create(props: OrderItemProps, id?: UniqueEntityID) {
-    return new OrderItem(props, id)
+  static create(
+    props: Optional<OrderItemProps, 'subtotal'>,
+    id?: UniqueEntityID
+  ) {
+    return new OrderItem(
+      {
+        ...props,
+        subtotal: props.price * props.quantity,
+      },
+      id
+    )
   }
 
   get orderId(): UniqueEntityID {
@@ -31,6 +42,10 @@ export class OrderItem extends Entity<OrderItemProps> {
 
   get quantity(): number {
     return this.props.quantity
+  }
+
+  get subtotal(): number {
+    return this.props.subtotal
   }
 
   set quantity(quantity: number) {

@@ -1,6 +1,5 @@
 import type { Product } from '@/domain/ecommerce/enterprise/entities/product'
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ProductPresenter {
   static toHTTP(product: Product) {
     return {

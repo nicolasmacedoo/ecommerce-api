@@ -2,7 +2,6 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Product } from '@/domain/ecommerce/enterprise/entities/product'
 import type { Product as PrismaProduct, Prisma } from '@prisma/client'
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class PrismaProductMapper {
   static toDomain(raw: PrismaProduct): Product {
     return new Product(

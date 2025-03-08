@@ -2,7 +2,6 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Customer } from '@/domain/ecommerce/enterprise/entities/customer'
 import type { Customer as PrismaCustomer, Prisma } from '@prisma/client'
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class PrismaCustomerMapper {
   static toDomain(raw: PrismaCustomer): Customer {
     return Customer.create(
@@ -11,6 +10,7 @@ export class PrismaCustomerMapper {
         fullName: raw.fullName,
         contact: raw.contact,
         address: raw.address,
+        status: raw.status,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },

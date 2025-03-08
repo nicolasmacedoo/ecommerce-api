@@ -9,6 +9,8 @@ async function bootstrap() {
 
   const envService = app.get(EnvService)
 
+  app.setGlobalPrefix('api')
+
   const config = new DocumentBuilder()
     .setTitle('Ecommerce API')
     .setDescription('REST API for a simplified e-commerce management system')
@@ -20,8 +22,6 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('docs', app, documentFactory())
-
-  app.setGlobalPrefix('api')
 
   const PORT = envService.get('PORT')
 

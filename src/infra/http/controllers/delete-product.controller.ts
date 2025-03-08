@@ -18,7 +18,7 @@ import {
 @ApiTags('Products')
 @Controller('/products/:id')
 export class DeleteProductController {
-  constructor(private readonly deleteProductUseCase: DeleteProductUseCase) {}
+  constructor(private readonly deleteProduct: DeleteProductUseCase) {}
 
   @Delete()
   @HttpCode(204)
@@ -36,7 +36,7 @@ export class DeleteProductController {
     description: 'Product not found',
   })
   async handle(@Param('id') id: string) {
-    const result = await this.deleteProductUseCase.execute({ id })
+    const result = await this.deleteProduct.execute({ id })
 
     if (result.isLeft()) {
       throw new NotFoundException()

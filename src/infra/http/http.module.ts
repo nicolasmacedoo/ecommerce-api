@@ -15,6 +15,16 @@ import { CreateProductUseCase } from '@/domain/ecommerce/application/use-cases/c
 import { GetProductByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-product-by-id'
 import { EditProductUseCase } from '@/domain/ecommerce/application/use-cases/edit-product'
 import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/delete-product'
+import { CreateOrderController } from './controllers/create-order.controller'
+import { CreateOrderUseCase } from '@/domain/ecommerce/application/use-cases/create-order'
+import { EditOrderController } from './controllers/edit-order.controller'
+import { EditOrderUseCase } from '@/domain/ecommerce/application/use-cases/edit-order'
+import { DeleteOrderController } from './controllers/delete-order.controller'
+import { DeleteOrderUseCase } from '@/domain/ecommerce/application/use-cases/delete-order'
+import { FetchOrdersController } from './controllers/fetch-recent-orders.controller'
+import { FetchOrdersUseCase } from '@/domain/ecommerce/application/use-cases/fetch-recent-orders'
+import { GetOrderByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-order-by-id'
+import { GetOrderByIdController } from './controllers/get-order-by-id.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -26,6 +36,11 @@ import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/d
     FetchProductsController,
     EditProductController,
     DeleteProductController,
+    CreateOrderController,
+    EditOrderController,
+    DeleteOrderController,
+    FetchOrdersController,
+    GetOrderByIdController,
   ],
   providers: [
     RegisterUserUseCase,
@@ -35,6 +50,11 @@ import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/d
     FetchProductsUseCase,
     EditProductUseCase,
     DeleteProductUseCase,
+    CreateOrderUseCase,
+    EditOrderUseCase,
+    DeleteOrderUseCase,
+    FetchOrdersUseCase,
+    GetOrderByIdUseCase,
   ],
 })
 export class HttpModule {}

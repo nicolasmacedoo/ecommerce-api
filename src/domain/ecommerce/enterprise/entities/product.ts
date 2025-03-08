@@ -77,4 +77,20 @@ export class Product extends Entity<ProductProps> {
   private touch(): void {
     this.props.updatedAt = new Date()
   }
+
+  decreaseStock(quantity: number): void {
+    if (quantity <= 0) {
+      throw new Error('Quantidade deve ser maior que zero')
+    }
+
+    this.stockQuantity -= quantity
+  }
+
+  increaseStock(quantity: number): void {
+    if (quantity <= 0) {
+      throw new Error('Quantidade deve ser maior que zero')
+    }
+
+    this.stockQuantity += quantity
+  }
 }

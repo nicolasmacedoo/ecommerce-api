@@ -8,10 +8,10 @@ import { PrismaCustomerMapper } from '../mappers/prisma-customer-mapper'
 export class PrismaCustomersRepository implements CustomersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findByUserId(userId: string): Promise<Customer | null> {
+  async findById(id: string): Promise<Customer | null> {
     const customer = await this.prisma.customer.findUnique({
       where: {
-        userId,
+        id,
       },
     })
 
