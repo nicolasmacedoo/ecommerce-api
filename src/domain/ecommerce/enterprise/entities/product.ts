@@ -20,7 +20,7 @@ export class Product extends Entity<ProductProps> {
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
-        updatedAt: null,
+        updatedAt: props.updatedAt ?? null,
       },
       id
     )

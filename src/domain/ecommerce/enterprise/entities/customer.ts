@@ -22,7 +22,7 @@ export class Customer extends Entity<CustomerProps> {
         ...props,
         status: props.status ?? true,
         createdAt: props.createdAt ?? new Date(),
-        updatedAt: null,
+        updatedAt: props.updatedAt ?? null,
       },
       id
     )
@@ -36,16 +36,36 @@ export class Customer extends Entity<CustomerProps> {
     return this.props.fullName
   }
 
+  set fullName(fullName: string) {
+    this.props.fullName = fullName
+    this.touch()
+  }
+
   get contact(): string {
     return this.props.contact
+  }
+
+  set contact(contact: string) {
+    this.props.contact = contact
+    this.touch()
   }
 
   get address(): string {
     return this.props.address
   }
 
+  set address(address: string) {
+    this.props.address = address
+    this.touch()
+  }
+
   get status(): boolean {
     return this.props.status
+  }
+
+  set status(status: boolean) {
+    this.props.status = status
+    this.touch()
   }
 
   get createdAt(): Date {
@@ -54,5 +74,9 @@ export class Customer extends Entity<CustomerProps> {
 
   get updatedAt(): Date | null | undefined {
     return this.props.updatedAt
+  }
+
+  private touch() {
+    this.props.updatedAt = new Date()
   }
 }

@@ -22,7 +22,7 @@ export class User extends Entity<UserProps> {
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
-        updatedAt: null,
+        updatedAt: props.updatedAt ?? null,
       },
       id
     )
