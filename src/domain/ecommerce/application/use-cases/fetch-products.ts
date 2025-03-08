@@ -5,6 +5,7 @@ import { ProductsRepository } from '../repositories/products-repository'
 
 interface FetchProductsUseCaseRequest {
   page: number
+  query?: string
 }
 
 type FetchProductsUseCaseResponse = Either<
@@ -20,8 +21,9 @@ export class FetchProductsUseCase {
 
   async execute({
     page,
+    query,
   }: FetchProductsUseCaseRequest): Promise<FetchProductsUseCaseResponse> {
-    const products = await this.productsRepository.findMany({ page })
+    const products = await this.productsRepository.findMany({ page, query })
 
     return right({
       products,

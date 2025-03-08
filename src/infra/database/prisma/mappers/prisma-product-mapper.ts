@@ -4,7 +4,7 @@ import type { Product as PrismaProduct, Prisma } from '@prisma/client'
 
 export class PrismaProductMapper {
   static toDomain(raw: PrismaProduct): Product {
-    return new Product(
+    return Product.create(
       {
         name: raw.name,
         description: raw.description,
