@@ -1,10 +1,17 @@
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+} from '@nestjs/common'
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger'
 import { OrderDto } from './dtos/order.dto'
 import { GetOrderByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-order-by-id'
@@ -24,6 +31,7 @@ export class GetOrderByIdController {
     type: OrderDto,
   })
   @ApiBadRequestResponse({ description: 'Invalid query parameters' })
+  @ApiNotFoundResponse({ description: 'Order not found' })
   async handle(@Param('id') id: string) {
     const result = await this.getOrderById.execute({
       orderId: id,
@@ -32,7 +40,7 @@ export class GetOrderByIdController {
     if (result.isLeft()) {
       const error = result.value
 
-      throw new BadRequestException(error.message)
+      throw new NotFoundException(error.message)
     }
 
     const { order } = result.value

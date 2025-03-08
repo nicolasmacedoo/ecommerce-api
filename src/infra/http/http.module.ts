@@ -25,6 +25,14 @@ import { FetchOrdersController } from './controllers/fetch-recent-orders.control
 import { FetchOrdersUseCase } from '@/domain/ecommerce/application/use-cases/fetch-recent-orders'
 import { GetOrderByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-order-by-id'
 import { GetOrderByIdController } from './controllers/get-order-by-id.controller'
+import { GetCustomerByIdController } from './controllers/get-customer-by-id.controller'
+import { GetCustomerByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-customer-by-id'
+import { FetchCustomersController } from './controllers/fetch-customers.controller'
+import { FetchCustomersUseCase } from '@/domain/ecommerce/application/use-cases/fetch-customers'
+import { DeleteCustomerUseCase } from '@/domain/ecommerce/application/use-cases/delete-customer'
+import { DeleteCustomerController } from './controllers/delete-customer.controller'
+import { EditCustomerUseCase } from '@/domain/ecommerce/application/use-cases/edit-customer'
+import { EditCustomerController } from './controllers/edit-customer.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -41,6 +49,10 @@ import { GetOrderByIdController } from './controllers/get-order-by-id.controller
     DeleteOrderController,
     FetchOrdersController,
     GetOrderByIdController,
+    FetchCustomersController,
+    GetCustomerByIdController,
+    DeleteCustomerController,
+    EditCustomerController,
   ],
   providers: [
     RegisterUserUseCase,
@@ -55,6 +67,10 @@ import { GetOrderByIdController } from './controllers/get-order-by-id.controller
     DeleteOrderUseCase,
     FetchOrdersUseCase,
     GetOrderByIdUseCase,
+    FetchCustomersUseCase,
+    GetCustomerByIdUseCase,
+    DeleteCustomerUseCase,
+    EditCustomerUseCase,
   ],
 })
 export class HttpModule {}
