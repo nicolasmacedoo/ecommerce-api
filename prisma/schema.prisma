@@ -7,20 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  CUSTOMER
-  ADMIN
-}
-
 model User {
   id        String   @id @default(uuid())
+  roleId    String   @map("role_id")
   name      String
   email     String   @unique
   password  String
-  role      Role
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  role     Role      @relation(fields: [roleId], references: [id])
   customer Customer?
 
   @@map("users")
@@ -40,6 +36,31 @@ model Customer {
   orders Order[]
 
   @@map("customers")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users       User[]
+  permissions Permission[] @relation("RolePermissions")
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  roles Role[] @relation("RolePermissions")
+
+  @@map("permissions")
 }
 
 model Product {
