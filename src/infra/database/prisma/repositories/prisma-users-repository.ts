@@ -10,7 +10,23 @@ import { PrismaUserWithRoleAndPermissionMapper } from '../mappers/prisma-user-wi
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findByEmail(email: string): Promise<UserWithRoleAndPermissions | null> {
+  async findById(id: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    if (!user) {
+      return null
+    }
+
+    return PrismaUserMapper.toDomain(user)
+  }
+
+  async findByEmailWithRoleAndPermissions(
+    email: string
+  ): Promise<UserWithRoleAndPermissions | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         email,
@@ -31,10 +47,35 @@ export class PrismaUsersRepository implements UsersRepository {
     return PrismaUserWithRoleAndPermissionMapper.toDomain(user)
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    })
+
+    if (!user) {
+      return null
+    }
+
+    return PrismaUserMapper.toDomain(user)
+  }
+
   async create(user: User): Promise<void> {
     const data = PrismaUserMapper.toPersistence(user)
 
     await this.prisma.user.create({
+      data,
+    })
+  }
+
+  async save(user: User): Promise<void> {
+    const data = PrismaUserMapper.toPersistence(user)
+
+    await this.prisma.user.update({
+      where: {
+        id: data.id,
+      },
       data,
     })
   }

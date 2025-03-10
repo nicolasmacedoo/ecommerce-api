@@ -12,18 +12,20 @@ export interface UserProps {
   name: string
   email: string
   password: string
+  emailVerified: boolean
   createdAt: Date
   updatedAt?: Date | null
 }
 
 export class User extends Entity<UserProps> {
   static create(
-    props: Optional<UserProps, 'createdAt' | 'updatedAt'>,
+    props: Optional<UserProps, 'createdAt' | 'updatedAt' | 'emailVerified'>,
     id?: UniqueEntityID
   ): User {
     return new User(
       {
         ...props,
+        emailVerified: props.emailVerified ?? false,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: props.updatedAt ?? null,
       },
@@ -47,11 +49,24 @@ export class User extends Entity<UserProps> {
     return this.props.roleId
   }
 
+  get emailVerified(): boolean {
+    return this.props.emailVerified
+  }
+
+  set emailVerified(value: boolean) {
+    this.props.emailVerified = value
+    this.touch()
+  }
+
   get createdAt(): Date {
     return this.props.createdAt
   }
 
   get updatedAt(): Date | null | undefined {
     return this.props.updatedAt
+  }
+
+  private touch() {
+    this.props.updatedAt = new Date()
   }
 }

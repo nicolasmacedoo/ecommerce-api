@@ -8,6 +8,8 @@ import { HashGenerator } from '../criptography/hash-generator'
 import { Injectable } from '@nestjs/common'
 import { MissingRequiredFieldsError } from './errors/missing-required-fields-error'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { MailService } from '@/infra/mail/mail.service'
+import { getTestMessageUrl } from 'nodemailer'
 
 interface RegisterUserUseCaseRequest {
   name: string
@@ -32,7 +34,8 @@ export class RegisterUserUseCase {
   constructor(
     private readonly hashGenerator: HashGenerator,
     private readonly usersRepository: UsersRepository,
-    private readonly customersRepository: CustomersRepository
+    private readonly customersRepository: CustomersRepository,
+    private readonly mailService: MailService
   ) {}
 
   async execute({
@@ -49,8 +52,6 @@ export class RegisterUserUseCase {
     if (userAlreadyExists) {
       return left(new UserAlreadyExistsError(email))
     }
-
-    console.log('role', role)
 
     if (role === Role.CUSTOMER) {
       if (!fullName || !contact || !address) {
@@ -80,6 +81,26 @@ export class RegisterUserUseCase {
       })
 
       await this.customersRepository.create(customer)
+    }
+
+    try {
+      const confirmationLink = `http://localhost:3333/api/accounts/${user.id}/verify-email`
+
+      const message = await this.mailService.sendAccountConfirmationEmail({
+        to: {
+          name: user.name,
+          address: user.email,
+        },
+        from: {
+          name: 'Team ecommerce',
+          address: 'hello@ecommerce.com',
+        },
+        link: confirmationLink,
+      })
+
+      console.log('Confirmation email sent:', getTestMessageUrl(message))
+    } catch (error) {
+      console.error('Failed to send confirmation email:', error)
     }
 
     return right({

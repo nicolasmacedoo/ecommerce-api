@@ -1,23 +1,16 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { User } from '@/domain/ecommerce/enterprise/entities/user'
-import type {
-  User as PrismaUser,
-  Role as PrismaRole,
-  Prisma,
-} from '@prisma/client'
-
-type PrismaUserRole = PrismaUser & {
-  role: PrismaRole
-}
+import type { User as PrismaUser, Prisma } from '@prisma/client'
 
 export class PrismaUserMapper {
-  static toDomain(raw: PrismaUserRole): User {
+  static toDomain(raw: PrismaUser): User {
     return User.create(
       {
-        roleId: new UniqueEntityID(raw.role.id),
+        roleId: new UniqueEntityID(raw.roleId),
         name: raw.name,
         email: raw.email,
         password: raw.password,
+        emailVerified: raw.emailVerified,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
@@ -32,6 +25,7 @@ export class PrismaUserMapper {
       name: user.name,
       email: user.email,
       password: user.password,
+      emailVerified: user.emailVerified,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt ?? undefined,
     }

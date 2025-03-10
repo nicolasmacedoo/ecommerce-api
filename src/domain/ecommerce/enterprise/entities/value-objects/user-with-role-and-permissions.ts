@@ -13,6 +13,7 @@ interface UserWithRoleAndPermissionsProps {
   email: string
   name: string
   password: string
+  emailVerified: boolean
   createdAt: Date
   updatedAt?: Date | null
 }
@@ -47,11 +48,24 @@ export class UserWithRoleAndPermissions extends ValueObject<UserWithRoleAndPermi
     return this.props.password
   }
 
+  get emailVerified(): boolean {
+    return this.props.emailVerified
+  }
+
+  set emailVerified(value: boolean) {
+    this.props.emailVerified = value
+    this.touch()
+  }
+
   get createdAt(): Date {
     return this.props.createdAt
   }
 
   get updatedAt(): Date | null | undefined {
     return this.props.updatedAt
+  }
+
+  private touch() {
+    this.props.updatedAt = new Date()
   }
 }

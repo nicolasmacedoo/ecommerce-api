@@ -26,6 +26,7 @@ export class PrismaUserWithRoleAndPermissionMapper {
       email: raw.email,
       name: raw.name,
       password: raw.password,
+      emailVerified: raw.emailVerified,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     })
