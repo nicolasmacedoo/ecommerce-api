@@ -12,6 +12,9 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger'
 import { FetchProductsDTO } from './dtos/product.dto'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const queryParamSchema = z.string().optional()
 
@@ -36,6 +39,8 @@ export class FetchProductsController {
   constructor(private readonly fetchProducts: FetchProductsUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @RequirePermissions('product:read')
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Fetch list of products with pagination and optional query',

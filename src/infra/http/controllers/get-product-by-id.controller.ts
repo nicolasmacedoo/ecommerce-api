@@ -1,11 +1,5 @@
 import { GetProductByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-product-by-id'
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-} from '@nestjs/common'
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common'
 import { ProductPresenter } from '../presenters/product-presenter'
 import {
   ApiTags,
@@ -17,7 +11,9 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger'
 import { ProductDTO } from './dtos/product.dto'
-import { NotFoundError } from 'rxjs'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 @ApiTags('Products')
 @Controller('/products/:id')
@@ -25,6 +21,8 @@ export class GetProductByIdController {
   constructor(private readonly getProductById: GetProductByIdUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @RequirePermissions('product:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a product by ID' })
   @ApiParam({

@@ -1,4 +1,7 @@
 import { DeleteCustomerUseCase } from '@/domain/ecommerce/application/use-cases/delete-customer'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
+import { Roles } from '@/infra/auth/role.decorator'
 import {
   Controller,
   Delete,
@@ -22,6 +25,8 @@ export class DeleteCustomerController {
 
   @Delete()
   @HttpCode(204)
+  @Roles(Role.ADMIN)
+  @RequirePermissions('customer:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a customer' })
   @ApiParam({

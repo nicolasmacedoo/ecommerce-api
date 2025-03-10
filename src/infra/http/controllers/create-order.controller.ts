@@ -19,6 +19,9 @@ import { createZodDto } from 'nestjs-zod'
 import { CreateOrderUseCase } from '@/domain/ecommerce/application/use-cases/create-order'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { InativeCustomerError } from '@/domain/ecommerce/application/use-cases/errors/inative-customer-error'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const createOrderBodySchema = z.object({
   customerId: z.string().uuid(),
@@ -40,6 +43,8 @@ export class CreateOrderController {
   constructor(private readonly createOrder: CreateOrderUseCase) {}
 
   @Post()
+  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @RequirePermissions('order:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new order' })
   @ApiCreatedResponse({ description: 'Order created successfully' })

@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 import { EditProductUseCase } from '@/domain/ecommerce/application/use-cases/edit-product'
 import {
@@ -19,6 +20,11 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger'
 import { createZodDto } from 'nestjs-zod'
+import { RolesGuard } from '@/infra/auth/role.guard'
+import { PermissionsGuard } from '@/infra/auth/permissions.guard'
+import { Roles } from '@/infra/auth/role.decorator'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
 
 const editProductBodySchema = z.object({
   name: z.string(),
@@ -38,6 +44,8 @@ export class EditProductController {
 
   @Put()
   @HttpCode(204)
+  @Roles(Role.ADMIN)
+  @RequirePermissions('product:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing product' })
   @ApiParam({

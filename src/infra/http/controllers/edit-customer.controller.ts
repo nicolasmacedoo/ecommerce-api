@@ -20,6 +20,9 @@ import {
 } from '@nestjs/swagger'
 import { createZodDto } from 'nestjs-zod'
 import { EditCustomerUseCase } from '@/domain/ecommerce/application/use-cases/edit-customer'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const editCustomerBodySchema = z.object({
   fullName: z.string(),
@@ -38,6 +41,8 @@ export class EditCustomerController {
   constructor(private readonly editCustomer: EditCustomerUseCase) {}
 
   @Put()
+  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @RequirePermissions('customer:update')
   @HttpCode(204)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing customer' })

@@ -16,6 +16,9 @@ import {
 import { OrderDto } from './dtos/order.dto'
 import { GetOrderByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-order-by-id'
 import { OrderPresenter } from '../presenters/order-presenter'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 @ApiTags('Orders')
 @Controller('/orders/:id')
@@ -23,6 +26,8 @@ export class GetOrderByIdController {
   constructor(private readonly getOrderById: GetOrderByIdUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('order:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Fetch order by ID' })
   @ApiResponse({

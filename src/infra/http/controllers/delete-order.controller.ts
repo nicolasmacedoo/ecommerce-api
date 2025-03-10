@@ -14,6 +14,9 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger'
+import { Roles } from '@/infra/auth/role.decorator'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
 
 @ApiTags('Orders')
 @Controller('/orders/:id')
@@ -21,6 +24,8 @@ export class DeleteOrderController {
   constructor(private readonly deleteOrder: DeleteOrderUseCase) {}
 
   @Delete()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('order:delete')
   @HttpCode(204)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a order and all its items' })
@@ -40,7 +45,6 @@ export class DeleteOrderController {
 
     if (result.isLeft()) {
       const error = result.value
-
       throw new NotFoundException(error.message)
     }
   }

@@ -10,6 +10,9 @@ import {
 import { GetCustomerByIdUseCase } from '@/domain/ecommerce/application/use-cases/get-customer-by-id'
 import { CustomerDTO } from './dtos/customer.dto'
 import { CustomerWithEmailPresenter } from '../presenters/customer-with-email-presenter'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 @ApiTags('Customers')
 @Controller('/customers/:id')
@@ -17,6 +20,8 @@ export class GetCustomerByIdController {
   constructor(private readonly getCustomerById: GetCustomerByIdUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @RequirePermissions('customer:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a customer by ID' })
   @ApiParam({

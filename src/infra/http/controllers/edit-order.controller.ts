@@ -22,6 +22,9 @@ import { createZodDto } from 'nestjs-zod'
 import { EditOrderUseCase } from '@/domain/ecommerce/application/use-cases/edit-order'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { InativeCustomerError } from '@/domain/ecommerce/application/use-cases/errors/inative-customer-error'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const editOrderBodySchema = z.object({
   customerId: z.string().uuid(),
@@ -43,6 +46,8 @@ export class EditOrderController {
   constructor(private readonly editOrder: EditOrderUseCase) {}
 
   @Put()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('order:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Edit a new order' })
   @ApiNoContentResponse({ description: 'Order editd successfully' })

@@ -10,6 +10,9 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger'
 import { createZodDto } from 'nestjs-zod'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const createProductBodySchema = z.object({
   name: z
@@ -30,6 +33,8 @@ export class CreateProductController {
   constructor(private readonly createProduct: CreateProductUseCase) {}
 
   @Post()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('product:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({

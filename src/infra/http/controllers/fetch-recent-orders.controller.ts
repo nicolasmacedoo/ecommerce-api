@@ -12,6 +12,9 @@ import {
 import { FetchOrdersUseCase } from '@/domain/ecommerce/application/use-cases/fetch-recent-orders'
 import { OrderWithCustomerPresenter } from '../presenters/order-with-customer-presenter'
 import { FetchOrdersResponseDto } from './dtos/order.dto'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const queryParamSchema = z.string().optional()
 
@@ -36,6 +39,8 @@ export class FetchOrdersController {
   constructor(private readonly fetchOrders: FetchOrdersUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('order:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Fetch list of orders with pagination and query' })
   @ApiQuery({

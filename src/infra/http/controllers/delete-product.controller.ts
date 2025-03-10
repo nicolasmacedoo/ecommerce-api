@@ -1,4 +1,7 @@
 import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/delete-product'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
+import { Roles } from '@/infra/auth/role.decorator'
 import {
   Controller,
   Delete,
@@ -21,6 +24,8 @@ export class DeleteProductController {
   constructor(private readonly deleteProduct: DeleteProductUseCase) {}
 
   @Delete()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('product:delete')
   @HttpCode(204)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a product' })

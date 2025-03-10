@@ -19,6 +19,9 @@ import { CustomerWithEmailPresenter } from '../presenters/customer-with-email-pr
 import { FetchCustomersUseCase } from '@/domain/ecommerce/application/use-cases/fetch-customers'
 import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe'
+import { Roles } from '@/infra/auth/role.decorator'
+import { Role } from '@/domain/ecommerce/enterprise/entities/user'
+import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 
 const queryParamSchema = z.string().optional()
 
@@ -43,6 +46,8 @@ export class FetchCustomersController {
   constructor(private readonly fetchCustomers: FetchCustomersUseCase) {}
 
   @Get()
+  @Roles(Role.ADMIN)
+  @RequirePermissions('customer:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Fetch customers' })
   @ApiResponse({

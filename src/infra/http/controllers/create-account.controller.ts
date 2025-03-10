@@ -20,15 +20,17 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger'
 import { createZodDto } from 'nestjs-zod'
+import type { Role } from '@/domain/ecommerce/enterprise/entities/user'
 
 const createAccountBodySchema = z.object({
+  roleId: z.string().uuid(),
   name: z.string({
     required_error: 'Name is required',
     invalid_type_error: 'Name must be a string',
   }),
   email: z.string().email({ message: 'Invalid email' }),
   password: z.string().min(6),
-  role: z.enum(['CUSTOMER', 'ADMIN']),
+  role: z.enum(['customer', 'admin']),
   fullName: z.string().optional(),
   contact: z.string().optional(),
   address: z.string().optional(),
@@ -57,13 +59,17 @@ export class CreateAccountController {
     description: 'Email already in use',
   })
   async handle(@Body(bodyValidationPipe) body: CreateAccountDTO) {
-    const { name, email, password, role, address, contact, fullName } = body
+    const { roleId, name, email, password, role, address, contact, fullName } =
+      body
+
+    const userRole = role as Role
 
     const result = await this.registerUser.execute({
       name,
       email,
       password,
-      role,
+      role: userRole,
+      roleId,
       fullName,
       contact,
       address,
