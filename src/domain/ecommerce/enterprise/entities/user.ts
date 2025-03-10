@@ -2,13 +2,16 @@ import { Entity } from 'src/core/entities/entity'
 import type { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import type { Optional } from 'src/core/types/optional'
 
-export type UserRole = 'ADMIN' | 'CUSTOMER'
+export enum Role {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+}
 
 export interface UserProps {
+  roleId: UniqueEntityID
   name: string
   email: string
   password: string
-  role: UserRole
   createdAt: Date
   updatedAt?: Date | null
 }
@@ -40,8 +43,8 @@ export class User extends Entity<UserProps> {
     return this.props.password
   }
 
-  get role(): UserRole {
-    return this.props.role
+  get roleId(): UniqueEntityID {
+    return this.props.roleId
   }
 
   get createdAt(): Date {

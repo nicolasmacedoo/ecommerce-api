@@ -44,8 +44,12 @@ export class AuthenticateUserUseCase {
       return left(new InvalidCredentialsError())
     }
 
+    const permissions = user.permissions.map(permission => permission.name)
+
     const accessToken = await this.encrypter.encrypt({
       sub: user.id.toString(),
+      role: user.role,
+      permissions,
     })
 
     return right({

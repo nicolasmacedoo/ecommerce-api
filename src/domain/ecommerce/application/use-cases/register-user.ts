@@ -1,18 +1,20 @@
 import { left, right, type Either } from 'src/core/either'
 import { Customer } from '../../enterprise/entities/customer'
-import { User, type UserRole } from '../../enterprise/entities/user'
+import { Role, User } from '../../enterprise/entities/user'
 import { CustomersRepository } from '../repositories/customers-repository'
 import { UsersRepository } from '../repositories/users-repository'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import { HashGenerator } from '../criptography/hash-generator'
 import { Injectable } from '@nestjs/common'
 import { MissingRequiredFieldsError } from './errors/missing-required-fields-error'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 interface RegisterUserUseCaseRequest {
   name: string
   email: string
   password: string
-  role: UserRole
+  role: Role
+  roleId: string
   fullName?: string
   contact?: string
   address?: string
@@ -38,6 +40,7 @@ export class RegisterUserUseCase {
     email,
     password,
     role,
+    roleId,
     address,
     contact,
     fullName,
@@ -47,7 +50,9 @@ export class RegisterUserUseCase {
       return left(new UserAlreadyExistsError(email))
     }
 
-    if (role === 'CUSTOMER') {
+    console.log('role', role)
+
+    if (role === Role.CUSTOMER) {
       if (!fullName || !contact || !address) {
         return left(
           new MissingRequiredFieldsError(['fullName', 'contact', 'address'])
@@ -58,15 +63,15 @@ export class RegisterUserUseCase {
     const hashedPassword = await this.hashGenerator.hash(password)
 
     const user = User.create({
+      roleId: new UniqueEntityID(roleId),
       name,
       email,
       password: hashedPassword,
-      role,
     })
 
     await this.usersRepository.create(user)
 
-    if (role === 'CUSTOMER' && fullName && contact && address) {
+    if (role === Role.CUSTOMER && fullName && contact && address) {
       const customer = Customer.create({
         userId: user.id,
         fullName,
