@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { DatabaseModule } from '../database/database.module'
 import { CryptographyModule } from '../cryptography/cryptography.module'
+import { MailModule } from '../mail/mail.module'
 import { CreateAccountController } from './controllers/create-account.controller'
 import { RegisterUserUseCase } from '@/domain/ecommerce/application/use-cases/register-user'
 import { AuthenticateController } from './controllers/authenticate.controller'
@@ -33,9 +34,11 @@ import { DeleteCustomerUseCase } from '@/domain/ecommerce/application/use-cases/
 import { DeleteCustomerController } from './controllers/delete-customer.controller'
 import { EditCustomerUseCase } from '@/domain/ecommerce/application/use-cases/edit-customer'
 import { EditCustomerController } from './controllers/edit-customer.controller'
+import { VerifyUserEmailController } from './controllers/verify-user-email.controller'
+import { VerifyUserEmailUseCase } from '@/domain/ecommerce/application/use-cases/verify-user-email'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, MailModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
@@ -53,6 +56,7 @@ import { EditCustomerController } from './controllers/edit-customer.controller'
     GetCustomerByIdController,
     DeleteCustomerController,
     EditCustomerController,
+    VerifyUserEmailController,
   ],
   providers: [
     RegisterUserUseCase,
@@ -71,6 +75,7 @@ import { EditCustomerController } from './controllers/edit-customer.controller'
     GetCustomerByIdUseCase,
     DeleteCustomerUseCase,
     EditCustomerUseCase,
+    VerifyUserEmailUseCase,
   ],
 })
 export class HttpModule {}
