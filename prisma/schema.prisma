@@ -83,6 +83,7 @@ enum OrderStatus {
   IN_PREPARATION
   DISPATCHED
   DELIVERED
+  CANCELLED
 }
 
 model Order {
