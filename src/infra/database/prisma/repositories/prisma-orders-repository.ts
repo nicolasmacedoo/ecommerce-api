@@ -7,6 +7,7 @@ import { OrderItemsRepository } from '@/domain/ecommerce/application/repositorie
 import { Injectable } from '@nestjs/common'
 import type { OrderWithCustomer } from '@/domain/ecommerce/enterprise/entities/value-objects/order-with-customer'
 import { PrismaOrderWithCustomerMapper } from '../mappers/prisma-order-with-customer'
+import { DomainEvents } from '@/core/events/domain-events'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
@@ -79,6 +80,9 @@ export class PrismaOrdersRepository implements OrdersRepository {
     })
 
     await this.orderItemsRepository.createMany(entity.items.getItems())
+
+    // Dispatch domain events after the entity is saved
+    DomainEvents.dispatchEventsForAggregate(entity.id)
   }
 
   async save(entity: Order): Promise<void> {
@@ -93,8 +97,11 @@ export class PrismaOrdersRepository implements OrdersRepository {
       }),
 
       this.orderItemsRepository.deleteMany(entity.items.getRemovedItems()),
-      this.orderItemsRepository.createMany(entity.items.getItems()),
+      this.orderItemsRepository.createMany(entity.items.getNewItems()),
     ])
+
+    // Dispatch domain events after the entity is saved
+    DomainEvents.dispatchEventsForAggregate(entity.id)
   }
 
   async delete(entity: Order): Promise<void> {

@@ -109,9 +109,9 @@ export class CreateOrderUseCase {
 
       order.addItem(orderItem)
 
-      product.decreaseStock(item.quantity)
+      // product.decreaseStock(item.quantity)
 
-      await this.productRepository.save(product)
+      // await this.productRepository.save(product)
     }
 
     await this.orderRepository.create(order)

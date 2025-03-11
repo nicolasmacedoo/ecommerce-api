@@ -4,12 +4,14 @@ import type { Optional } from 'src/core/types/optional'
 import type { OrderItem } from './order-item'
 import { AggregateRoot } from '@/core/entities/aggregate-root'
 import type { OrderItemsList } from './order-items-list'
+import { OrderCreatedEvent } from '../events/order-created-event'
 
 export type OrderStatus =
   | 'RECEIVED'
   | 'IN_PREPARATION'
   | 'DISPATCHED'
   | 'DELIVERED'
+  | 'CANCELLED'
 
 export interface OrderProps {
   customerId: UniqueEntityID
@@ -24,7 +26,7 @@ export class Order extends AggregateRoot<OrderProps> {
     props: Optional<OrderProps, 'date' | 'status' | 'totalAmount'>,
     id?: UniqueEntityID
   ): Order {
-    return new Order(
+    const order = new Order(
       {
         ...props,
         date: props.date ?? new Date(),
@@ -33,6 +35,14 @@ export class Order extends AggregateRoot<OrderProps> {
       },
       id
     )
+
+    const isNewOrder = !id
+
+    if (isNewOrder) {
+      order.addDomainEvent(new OrderCreatedEvent(order))
+    }
+
+    return order
   }
 
   get customerId(): UniqueEntityID {
@@ -72,7 +82,6 @@ export class Order extends AggregateRoot<OrderProps> {
       throw new Error('Item quantity must be greater than zero')
     }
 
-    //verifica se o produto ja existe no pedido
     const existingItem = this.items.currentItems.find(existingItem =>
       existingItem.productId.equals(item.productId)
     )

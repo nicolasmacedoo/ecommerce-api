@@ -121,9 +121,9 @@ export class EditOrderUseCase {
 
       orderItems.push(orderItem)
 
-      product.decreaseStock(item.quantity)
+      // product.decreaseStock(item.quantity)
 
-      await this.productRepository.save(product)
+      // await this.productRepository.save(product)
     }
 
     orderItemsList.update(orderItems)

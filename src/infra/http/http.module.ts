@@ -36,9 +36,13 @@ import { EditCustomerUseCase } from '@/domain/ecommerce/application/use-cases/ed
 import { EditCustomerController } from './controllers/edit-customer.controller'
 import { VerifyUserEmailController } from './controllers/verify-user-email.controller'
 import { VerifyUserEmailUseCase } from '@/domain/ecommerce/application/use-cases/verify-user-email'
+import { HttpModule as AxiosHttpModule } from '@nestjs/axios'
+
+import { OrderProcessingClient } from '@/domain/ecommerce/application/clients/order-processing-client'
+import { HttpOrderProcessingClient } from './clients/http-order-processing-client'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, MailModule],
+  imports: [DatabaseModule, CryptographyModule, MailModule, AxiosHttpModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
@@ -76,6 +80,11 @@ import { VerifyUserEmailUseCase } from '@/domain/ecommerce/application/use-cases
     DeleteCustomerUseCase,
     EditCustomerUseCase,
     VerifyUserEmailUseCase,
+    {
+      provide: OrderProcessingClient,
+      useClass: HttpOrderProcessingClient,
+    },
   ],
+  exports: [OrderProcessingClient],
 })
 export class HttpModule {}
