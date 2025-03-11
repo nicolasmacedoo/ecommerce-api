@@ -57,6 +57,16 @@ export class PrismaOrderItemsRepository implements OrderItemsRepository {
     return orderItems.map(PrismaOrderItemMapper.toDomain)
   }
 
+  async findManyByProductId(productId: string): Promise<OrderItem[]> {
+    const orderItems = await this.prisma.orderItem.findMany({
+      where: {
+        productId,
+      },
+    })
+
+    return orderItems.map(PrismaOrderItemMapper.toDomain)
+  }
+
   async deleteManyByOrderId(orderId: string): Promise<void> {
     await this.prisma.orderItem.deleteMany({
       where: {

@@ -1,8 +1,12 @@
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { DeleteProductUseCase } from '@/domain/ecommerce/application/use-cases/delete-product'
+import { ProductInOrderError } from '@/domain/ecommerce/application/use-cases/errors/product-in-order-error'
 import { Role } from '@/domain/ecommerce/enterprise/entities/user'
 import { RequirePermissions } from '@/infra/auth/permissions.decorator'
 import { Roles } from '@/infra/auth/role.decorator'
 import {
+  BadRequestException,
+  ConflictException,
   Controller,
   Delete,
   HttpCode,
@@ -44,7 +48,15 @@ export class DeleteProductController {
     const result = await this.deleteProduct.execute({ id })
 
     if (result.isLeft()) {
-      throw new NotFoundException()
+      const error = result.value
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message)
+        case ProductInOrderError:
+          throw new ConflictException(error.message)
+        default:
+          throw new BadRequestException('Invalid request')
+      }
     }
   }
 }

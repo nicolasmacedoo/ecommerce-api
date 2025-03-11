@@ -1,4 +1,4 @@
-import type { ProductsRepository } from '@/domain/ecommerce/application/repositories/products-repository'
+import { ProductsRepository } from '@/domain/ecommerce/application/repositories/products-repository'
 import type { Product } from '@/domain/ecommerce/enterprise/entities/product'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
