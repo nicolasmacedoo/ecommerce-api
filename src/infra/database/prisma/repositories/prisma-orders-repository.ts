@@ -48,7 +48,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
   async findManyRecentWithCustomer({
     page,
     query,
+    startDate,
+    endDate,
   }: PaginationParams): Promise<OrderWithCustomer[]> {
+    let adjustedEndDate = endDate
+    if (startDate && endDate && startDate.getTime() === endDate.getTime()) {
+      adjustedEndDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000)
+    }
+
     const orders = await this.prisma.order.findMany({
       where: {
         customer: {
@@ -56,6 +63,10 @@ export class PrismaOrdersRepository implements OrdersRepository {
             contains: query,
             mode: 'insensitive',
           },
+        },
+        date: {
+          gte: startDate,
+          lte: adjustedEndDate,
         },
       },
       orderBy: {

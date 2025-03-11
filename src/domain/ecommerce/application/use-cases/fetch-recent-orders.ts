@@ -6,6 +6,8 @@ import type { OrderWithCustomer } from '../../enterprise/entities/value-objects/
 interface FetchRecentOrdersUseCaseRequest {
   page: number
   query?: string
+  startDate?: Date
+  endDate?: Date
 }
 
 type FetchRecentOrdersUseCaseResponse = Either<
@@ -22,10 +24,14 @@ export class FetchOrdersUseCase {
   async execute({
     page,
     query,
+    startDate,
+    endDate,
   }: FetchRecentOrdersUseCaseRequest): Promise<FetchRecentOrdersUseCaseResponse> {
     const orders = await this.ordersRepository.findManyRecentWithCustomer({
       page,
       query,
+      startDate,
+      endDate,
     })
 
     return right({
