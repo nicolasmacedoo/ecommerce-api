@@ -13,6 +13,31 @@ services:
       - ./data/pg:/data/postgres
     networks:
       - ecommerce
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  api:
+    container_name: ecommerce-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3333:3333
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 3333
+      NODE_ENV: development
+    volumes:
+      - ./src/sales-report:/usr/src/app/src/sales-report
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce
 
 networks:
   ecommerce:
