@@ -8,13 +8,67 @@ import { Injectable } from '@nestjs/common'
 import type { OrderWithCustomer } from '@/domain/ecommerce/enterprise/entities/value-objects/order-with-customer'
 import { PrismaOrderWithCustomerMapper } from '../mappers/prisma-order-with-customer'
 import { DomainEvents } from '@/core/events/domain-events'
+import { ProductsRepository } from '@/domain/ecommerce/application/repositories/products-repository'
+
+interface SalesReportData {
+  productId: string
+  productName: string
+  quantitySold: number
+  totalValue: number
+}
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly productsRepository: ProductsRepository,
     private readonly orderItemsRepository: OrderItemsRepository
   ) {}
+
+  async findSalesReportData(params: {
+    startDate: Date
+    endDate: Date
+  }): Promise<SalesReportData[]> {
+    const { startDate, endDate } = params
+
+    const results = await this.prisma.orderItem.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true,
+        subtotal: true,
+      },
+      where: {
+        order: {
+          date: {
+            gte: startDate,
+            lte: endDate,
+          },
+          status: {
+            in: ['COMPLETED'],
+          },
+        },
+      },
+      orderBy: {
+        _sum: {
+          quantity: 'desc',
+        },
+      },
+    })
+
+    const productSales = await Promise.all(
+      results.map(async item => {
+        const product = await this.productsRepository.findById(item.productId)
+
+        return {
+          productId: item.productId,
+          productName: product?.name || '',
+          quantitySold: Number(item._sum.quantity) || 0,
+          totalValue: Number(item._sum.subtotal) || 0,
+        }
+      })
+    )
+    return productSales
+  }
 
   async findById(id: string): Promise<Order | null> {
     const order = await this.prisma.order.findUnique({
@@ -92,7 +146,6 @@ export class PrismaOrdersRepository implements OrdersRepository {
 
     await this.orderItemsRepository.createMany(entity.items.getItems())
 
-    // Dispatch domain events after the entity is saved
     DomainEvents.dispatchEventsForAggregate(entity.id)
   }
 
@@ -111,7 +164,6 @@ export class PrismaOrdersRepository implements OrdersRepository {
       this.orderItemsRepository.createMany(entity.items.getNewItems()),
     ])
 
-    // Dispatch domain events after the entity is saved
     DomainEvents.dispatchEventsForAggregate(entity.id)
   }
 
