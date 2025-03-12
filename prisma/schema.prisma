@@ -84,6 +84,7 @@ enum OrderStatus {
   DISPATCHED
   DELIVERED
   CANCELLED
+  COMPLETED
 }
 
 model Order {
@@ -111,4 +112,16 @@ model OrderItem {
 
   @@id([productId, orderId])
   @@map("order_items")
+}
+
+model SalesReport {
+  id                String   @id @default(uuid())
+  startDate         DateTime @map("start_date")
+  endDate           DateTime @map("end_date")
+  totalSales        Decimal  @map("total_sales") @db.Decimal(15, 2)
+  totalProductsSold Int      @map("total_products_sold")
+  path              String   @map("path")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("sales_reports")
 }
