@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+src/sales-report
+.git
+.env
+.env.*
+dist
+coverage
+.vscode
+data
