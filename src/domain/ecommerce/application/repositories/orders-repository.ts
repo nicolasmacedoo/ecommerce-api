@@ -7,4 +7,16 @@ export abstract class OrdersRepository extends BaseRepository<Order> {
   abstract findManyRecentWithCustomer(
     params: PaginationParams
   ): Promise<OrderWithCustomer[]>
+
+  abstract findSalesReportData(params: {
+    startDate: Date
+    endDate: Date
+  }): Promise<
+    {
+      productId: string
+      productName: string
+      quantitySold: number
+      totalValue: number
+    }[]
+  >
 }

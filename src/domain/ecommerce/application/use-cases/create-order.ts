@@ -119,7 +119,5 @@ export class CreateOrderUseCase {
     return right({
       order,
     })
-
-    //TODO: try cath surround caso algo de error nao subtrair quantidade produto?
   }
 }

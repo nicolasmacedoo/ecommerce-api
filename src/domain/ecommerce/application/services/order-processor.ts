@@ -38,8 +38,6 @@ export class OrderProcessor {
       }
     } else {
       order.changeStatus('CANCELLED')
-      // You might want to implement additional logic here,
-      // such as returning items to stock, notifying the customer, etc.
     }
 
     await this.ordersRepository.save(order)

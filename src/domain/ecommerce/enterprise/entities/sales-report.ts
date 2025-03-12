@@ -3,7 +3,8 @@ import type { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import type { Optional } from 'src/core/types/optional'
 
 export interface SalesReportProps {
-  period: string
+  startDate: Date
+  endDate: Date
   totalSales: number
   totalProductsSold: number
   path: string
@@ -24,8 +25,12 @@ export class SalesReport extends Entity<SalesReportProps> {
     )
   }
 
-  get period(): string {
-    return this.props.period
+  get startDate(): Date {
+    return this.props.startDate
+  }
+
+  get endDate(): Date {
+    return this.props.endDate
   }
 
   get totalSales(): number {

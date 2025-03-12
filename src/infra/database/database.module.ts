@@ -10,6 +10,8 @@ import { OrdersRepository } from '@/domain/ecommerce/application/repositories/or
 import { PrismaOrdersRepository } from './prisma/repositories/prisma-orders-repository'
 import { OrderItemsRepository } from '@/domain/ecommerce/application/repositories/order-items-repository'
 import { PrismaOrderItemsRepository } from './prisma/repositories/prisma-order-items-repository'
+import { SalesReportsRepository } from '@/domain/ecommerce/application/repositories/sales-reports-repository'
+import { PrismaSalesReportsRepository } from './prisma/repositories/prisma-sales-reports-repository'
 
 @Module({
   providers: [
@@ -34,6 +36,10 @@ import { PrismaOrderItemsRepository } from './prisma/repositories/prisma-order-i
       provide: OrderItemsRepository,
       useClass: PrismaOrderItemsRepository,
     },
+    {
+      provide: SalesReportsRepository,
+      useClass: PrismaSalesReportsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -42,6 +48,7 @@ import { PrismaOrderItemsRepository } from './prisma/repositories/prisma-order-i
     ProductsRepository,
     OrdersRepository,
     OrderItemsRepository,
+    SalesReportsRepository,
   ],
 })
 export class DatabaseModule {}

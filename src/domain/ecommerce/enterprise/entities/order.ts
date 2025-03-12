@@ -12,6 +12,7 @@ export type OrderStatus =
   | 'DISPATCHED'
   | 'DELIVERED'
   | 'CANCELLED'
+  | 'COMPLETED'
 
 export interface OrderProps {
   customerId: UniqueEntityID
