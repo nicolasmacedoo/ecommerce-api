@@ -40,9 +40,20 @@ import { HttpModule as AxiosHttpModule } from '@nestjs/axios'
 
 import { OrderProcessingClient } from '@/domain/ecommerce/application/clients/order-processing-client'
 import { HttpOrderProcessingClient } from './clients/http-order-processing-client'
+import { GenerateSalesReportUseCase } from '@/domain/ecommerce/application/use-cases/generate-sales-report'
+import { GenerateSalesReportController } from './controllers/generate-sales-report.controller'
+import { StorageModule } from '../storage/storage.module'
+import { StorageClient } from '@/domain/ecommerce/application/storage/storage-client'
+import { FileSystemStorage } from '../storage/file-system-storage'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, MailModule, AxiosHttpModule],
+  imports: [
+    DatabaseModule,
+    CryptographyModule,
+    MailModule,
+    AxiosHttpModule,
+    StorageModule,
+  ],
   controllers: [
     CreateAccountController,
     AuthenticateController,
@@ -61,6 +72,7 @@ import { HttpOrderProcessingClient } from './clients/http-order-processing-clien
     DeleteCustomerController,
     EditCustomerController,
     VerifyUserEmailController,
+    GenerateSalesReportController,
   ],
   providers: [
     RegisterUserUseCase,
@@ -80,9 +92,14 @@ import { HttpOrderProcessingClient } from './clients/http-order-processing-clien
     DeleteCustomerUseCase,
     EditCustomerUseCase,
     VerifyUserEmailUseCase,
+    GenerateSalesReportUseCase,
     {
       provide: OrderProcessingClient,
       useClass: HttpOrderProcessingClient,
+    },
+    {
+      provide: StorageClient,
+      useClass: FileSystemStorage,
     },
   ],
   exports: [OrderProcessingClient],
