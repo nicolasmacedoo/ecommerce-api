@@ -1,4 +1,4 @@
-import { left, right, type Either } from 'src/core/either'
+import { left, right, type Either } from '@/core/either'
 import { Customer } from '../../enterprise/entities/customer'
 import { Role, User } from '../../enterprise/entities/user'
 import { CustomersRepository } from '../repositories/customers-repository'

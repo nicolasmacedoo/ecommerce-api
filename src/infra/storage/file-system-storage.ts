@@ -5,10 +5,7 @@ import * as path from 'node:path'
 
 @Injectable()
 export class FileSystemStorage implements StorageClient {
-  private readonly baseDir: string = path.join(
-    process.cwd(),
-    'src/sales-report'
-  )
+  private readonly baseDir: string = path.join(process.cwd(), '@/sales-report')
 
   constructor() {
     if (!fs.existsSync(this.baseDir)) {
