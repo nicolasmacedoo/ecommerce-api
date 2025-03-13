@@ -50,7 +50,7 @@ Uma API completa para gerenciamento de e-commerce construída com NestJS, TypeSc
 
 1. Clone o repositório:
    ```bash
-   git clone https://your-repository-url.git
+   git clone https://github.com/nicolasmacedoo/ecommerce-api.git
    cd ecommerce-api
    ```
 
